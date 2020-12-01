@@ -1,0 +1,153 @@
+server:
+  servlet:
+    context-path: /storage
+  tomcat:
+    uri-encoding: UTF-8
+  port: 8060
+
+spring:
+  application:
+    name: storage
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  messages:
+    encoding: UTF-8
+  servlet:
+    multipart:
+      #开启文件上传配置
+      enabled: true
+      #单个文件最大
+      max-file-size: 200MB
+      #请求最大
+      max-request-size: 1000MB
+      #文件临时缓存目录
+      location: H:/storage
+  jpa:
+    #开启sql打印
+    show-sql: true
+    hibernate:
+      #create: 删除表并新建
+      #create-drop: 删除表并新建，关闭程序删除表，无表则报错
+      #update: 更新表，保留数据
+      #validate: 校验表，不一致报错
+      ddl-auto: update
+    #数据库方言
+    database-platform: sg.storage.common.config.MySQL5InnoDBDialectUTF8
+  #数据库连接
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://192.168.3.128:3306/storage?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull&useSSL=false
+    url: jdbc:mysql://localhost:3306/storage?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: root
+    password: root
+  kafka:
+    #连接地址
+    bootstrap-servers: 127.0.0.1:9092
+    producer:
+      retries: 0
+      #批量发送消息大小
+      batch-size: 16384
+      buffer-memory: 33554432
+      #消息key与value编码方式
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: file
+      #自动偏移设置
+      auto-offset-reset: earliest
+      #自动提交确认配置
+      enable-auto-commit: true
+      auto-commit-interval: 100
+      #消息key与value解码方式
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+#OpenOffice配置
+open-office:
+  ip: 127.0.0.1
+  port: 8100
+
+folder:
+  types:
+    - id: 1
+      name: 普通文件夹
+    - id: 2
+      name: 应用类文件夹
+    - id: 3
+      name: 公告类文件夹
+
+#阿里OSS存储配置
+oss:
+  endpoint: oss-cn-hangzhou.aliyuncs.com
+  url: https://xxxx.oss-cn-hangzhou.aliyuncs.com/
+  accessKeyId: your_accessKey_id
+  accessKeySecret: your_accessKey_secret
+  bucketName: your_bucket_name
+
+file:
+  #文件存储位置local（本地）/oss（阿里OSS）
+  location: local
+  #文件本地存储基础路径
+  basePath: H://file
+  transformInfos:
+    #文件类型
+    - fileType: image
+      #是否自动转化
+      autoTransform: false
+      transformTypes:
+        #转化文件后缀
+        - transformSuffix: png
+          #转化请求组装类
+          transformRequestClass: sg.storage.transform.creator.impl.TransformImageToImage
+          #转化实现类
+          transformClass: sg.storage.transform.service.impl.image.ImageTransform
+    - fileType: video
+      autoTransform: false
+      transformTypes:
+        - transformSuffix: mp4
+          transformRequestClass: sg.storage.transform.creator.impl.DefaultTransform
+          transformClass: sg.storage.transform.service.impl.video.VideoTransform
+        - transformSuffix: png
+          transformRequestClass: sg.storage.transform.creator.impl.TransformVideoToImage
+          transformClass: sg.storage.transform.service.impl.video.VideoImageTransform
+    - fileType: audio
+      autoTransform: false
+      transformTypes:
+        - transformSuffix: mp3
+          transformRequestClass: sg.storage.transform.creator.impl.DefaultTransform
+          transformClass: sg.storage.transform.service.impl.audio.AudioTransform
+    - fileType: word
+      autoTransform: false
+      transformTypes:
+        - transformSuffix: pdf
+          transformRequestClass: sg.storage.transform.creator.impl.DefaultTransform
+          transformClass: sg.storage.transform.service.impl.openOffice.OpenOfficeTransform
+        - transformSuffix: html
+          transformRequestClass: sg.storage.transform.creator.impl.DefaultTransform
+          transformClass: sg.storage.transform.service.impl.openOffice.OpenOfficeTransform
+    - fileType: excel
+      autoTransform: false
+      transformTypes:
+        - transformSuffix: pdf
+          transformRequestClass: sg.storage.transform.creator.impl.DefaultTransform
+          transformClass: sg.storage.transform.service.impl.openOffice.OpenOfficeTransform
+        - transformSuffix: html
+          transformRequestClass: sg.storage.transform.creator.impl.DefaultTransform
+          transformClass: sg.storage.transform.service.impl.openOffice.OpenOfficeTransform
+    - fileType: other
+      autoTransform: false
+
+#日志文件存储路径
+log_path: H:/storage/logs
+#单份日志文件最大存储
+log_maxSize: 10MB
+#日志文件保存天数
+log_saveDays: 30
+#全级别日志文件名
+log_file: log_%d{yyyy-MM-dd}_%i.log
+#仅error日志文件名
+log_errorFile: log_error_%d{yyyy-MM-dd}_%i.log

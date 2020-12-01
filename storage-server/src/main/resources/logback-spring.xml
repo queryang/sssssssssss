@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- scan=true配置文件若发生改变则会重新加载 -->
+<!-- scanPeriod=60 seconds扫描配置文件是否发生改变时间间隔 -->
+<!-- debug=true打印logback运行状态内部日志 -->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!-- 引入属性配置 -->
+    <property resource="application.yml"/>
+    <!-- 控制台打印DEBUG级别以上的日志 -->
+    <appender name="debugConsole" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+    <!-- 控制台只打印INFO级别的日志 -->
+    <appender name="infoConsole" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!-- 控制台只打印ERROR级别的日志 -->
+    <appender name="errorConsole" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!-- 生成全级别的日志文件 -->
+    <appender name="logFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志文件保存路径与名称 -->
+            <fileNamePattern>${log_path}/${log_file}</fileNamePattern>
+            <!-- 文件大小触发重写新文件 -->
+            <maxFileSize>${log_maxSize}</maxFileSize>
+            <!-- 日志文件最大保留天数 -->
+            <maxHistory>${log_saveDays}</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n</pattern>
+        </encoder>
+        <!-- 生成除ERROR级别外的日志文件 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+    </appender>
+    <!-- 生成ERROR级别的日志文件 -->
+    <appender name="logErrorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志文件保存路径与名称 -->
+            <fileNamePattern>${log_path}/${log_errorFile}</fileNamePattern>
+            <!-- 文件大小触发重写新文件 -->
+            <maxFileSize>${log_maxSize}</maxFileSize>
+            <!-- 日志文件最大保留天数 -->
+            <maxHistory>${log_saveDays}</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date|%thread|%X{invokeNo}|%level|%logger{0}|%msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <root>
+        <level value="DEBUG"/>
+        <!-- 控制台打印DEBUG级别以上的日志 -->
+        <!-- <appender-ref ref="debugConsole"/> -->
+        <!-- 控制台只打印INFO级别的日志 -->
+        <appender-ref ref="infoConsole"/>
+        <!-- 控制台只打印ERROR级别的日志 -->
+        <appender-ref ref="errorConsole"/>
+        <!-- 生成全级别的日志文件 -->
+        <!-- <appender-ref ref="logFile"/> -->
+        <!-- 生成ERROR级别的日志文件 -->
+        <!-- <appender-ref ref="logErrorFile"/> -->
+    </root>
+</configuration>
