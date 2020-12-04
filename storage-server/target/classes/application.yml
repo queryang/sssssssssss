@@ -93,6 +93,8 @@ file:
   location: local
   #文件本地存储基础路径
   basePath: H://file
+  #智能客服项目存储路径-注意文件路径后面要加 "\" !!
+  scsFilePath: H:\scs\
   transformInfos:
     #文件类型
     - fileType: image
